@@ -403,3 +403,22 @@ aside {
         margin: 0 auto;
     }
 }
+
+#install-button {
+    background-color: #1b2cc1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+#install-button > a {
+    color: white;
+    text-decoration: none;
+}
+
+#install-button:hover {
+    background-color: #2a3de0;
+}

@@ -9,20 +9,31 @@ self.addEventListener("install", e =>
     .then(c => c.addAll(SHELL)))
 )
 
-self.addEventListener("activate", e => 
-    e.waitUntil(caches.keys().then(ks => 
-        Promise.all(ks.filter(k => 
-            k.startsWith("todolist-app-" && k !== CACHE)
-            .map(k => caches.delete(k))
-        ))
-    ))
+self.addEventListener("activate", (e) =>
+    e.waitUntil(
+        caches.keys().then((ks) =>
+            Promise.all(
+                ks.filter((k) => k.startsWith("todolist-app-") && k !== CACHE)
+                .map((k) => caches.delete(k))
+            )
+        )
+    )
 )
 
 self.addEventListener("fetch", e => {
     if(e.request.method !== "GET") return 
+
+    if(e.request.method === "navigate") {
+        e.respondWith(
+            fetch(req).catch(() => caches.match("offline.html"))
+        )
+        return 
+    }
+
     e.respondWith(
         caches.match(e.request)
         .then(r => r || fetch(e.request))
+        .catch(() => Response.error()) 
     )
 })
 
@@ -35,10 +46,10 @@ workbox.precaching.cleanupOutdatedCaches()
 
 workbox.routing.registerRoute(
     ({ request }) => request.mode === "navigate",
-    new strategies.NetworkFirst({
+    new workbox.strategies.NetworkFirst({
         cacheName: "pages",
         networkTimeoutSeconds: 3,
-        plugins: [new expiration.ExpirationPlugin({ maxEntries: 10 })],
+        plugins: [new workbox.expiration.ExpirationPlugin({ maxEntries: 10 })],
     })
 )
 

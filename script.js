@@ -414,7 +414,7 @@ window.addEventListener('pagehide', stopCamera)
 //     if(task) showDetails(task)
 // }
 
-if('serviceworker' in navigator) {
+if('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch((err) => {
         console.warn('Service worker registration failed:', err)
     })
@@ -524,30 +524,30 @@ function markSeeded() {
 
 //implement
 applyTheme(loadTheme())
-initDB(
-    function onReady() {
-        loadTasks(function (saved) {
-            if (saved.length === 0 && !hasSeeded()) {
-                tasks = defaultTasks.map((t) => ({ ...t }))
-                tasks.forEach((t) => saveTask(t))
-            } else {
-                tasks = saved
-            }
-            markSeeded()
-            renderTaskList()
-            const wanted = new URLSearchParams(location.search).get('task')
-            const target = tasks.find((t) => String(t.id) === wanted) || tasks[0]
-            if(target) showDetails(target)
-            startReminders()
-        })
-    },
-    function onFail() {
-        tasks = defaultTasks.map((t) => ({...t}))
-        renderTaskList()
-        showDetails(tasks[0])
-        startReminders()
-    }
-)
+// initDB(
+//     function onReady() {
+//         loadTasks(function (saved) {
+//             if (saved.length === 0 && !hasSeeded()) {
+//                 tasks = defaultTasks.map((t) => ({ ...t }))
+//                 tasks.forEach((t) => saveTask(t))
+//             } else {
+//                 tasks = saved
+//             }
+//             markSeeded()
+//             renderTaskList()
+//             const wanted = new URLSearchParams(location.search).get('task')
+//             const target = tasks.find((t) => String(t.id) === wanted) || tasks[0]
+//             if(target) showDetails(target)
+//             startReminders()
+//         })
+//     },
+//     function onFail() {
+//         tasks = defaultTasks.map((t) => ({...t}))
+//         renderTaskList()
+//         showDetails(tasks[0])
+//         startReminders()
+//     }
+// )
 
 //Task Details: used
 function selectTask(task) {
@@ -566,3 +566,20 @@ function selectTask(task) {
         preview.hidden = true;
     }
 }
+
+let deferredPrompt;
+const btn = document.querySelector("#install-button");
+btn.hidden = true;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    btn.hidden = false;
+});
+
+btn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    await deferredPrompt.prompt();
+    deferredPrompt = null;
+    btn.hidden = true;
+});

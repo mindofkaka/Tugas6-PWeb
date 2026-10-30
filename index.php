@@ -3,8 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tugas 4 Pemrograman Web</title>
+        <title>Tugas 5 Pemrograman Web</title>
         <link rel="stylesheet" href="style.css">
+        <link rel="manifest" href="manifest.json">
     </head>
     <body>
         <header>
@@ -26,9 +27,9 @@
                 &copy; Kaka 2026
             </div>
 
-            <div>
+            <button id="install-button">
                 <a href="manifest.json" download>Click here to install as PWA</a>
-            </div>
+            </button>
         </footer>
         <script src="script.js" defer></script>
     </body>
